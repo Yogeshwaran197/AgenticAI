@@ -66,12 +66,9 @@ while True:
     if user_input == "exit":
         break
 
-    response = ChatBot.invoke({
-        "messages": user_input
-    }, config=config)
-
-    print(f"\nAI : {response['messages'][-1].content}")
-
-
-
-
+    for message_chunk, metadata in ChatBot.stream({
+        "messages": [HumanMessage(content=user_input)]
+    }, config=config, stream_mode="messages"):
+        if message_chunk.content:
+            print(message_chunk.content, end="", flush=True)
+    print()
